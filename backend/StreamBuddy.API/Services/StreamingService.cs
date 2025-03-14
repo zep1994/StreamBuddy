@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using StreamBuddy.API.Models;
+using System.Web;
 
 namespace StreamBuddy.API.Services
 {
@@ -9,10 +10,12 @@ namespace StreamBuddy.API.Services
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
+        private readonly string _baseUrl;
 
         public StreamingService(IConfiguration configuration)
         {
-           _apiKey = configuration["RAPIDAPI_KEY"];
+            _apiKey = configuration["RAPIDAPI_KEY"] ?? Environment.GetEnvironmentVariable("RAPIDAPI_KEY");
+            _baseUrl = $"https://{configuration["RAPIDAPI_HOST"] ?? "streaming-availability.p.rapidapi.com"}/shows";
 
             if (string.IsNullOrEmpty(_apiKey))
             {
@@ -21,35 +24,97 @@ namespace StreamBuddy.API.Services
 
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Add("x-rapidapi-key", _apiKey);
-            _httpClient.DefaultRequestHeaders.Add("x-rapidapi-host", "streaming-availability.p.rapidapi.com");
+            _httpClient.DefaultRequestHeaders.Add("x-rapidapi-host", configuration["RAPIDAPI_HOST"] ?? "streaming-availability.p.rapidapi.com");
         }
 
-        public async Task<List<Movie>> SearchMoviesAsync(string query)
+        public async Task<List<Movie>> SearchMoviesAsync(string query, string country = "us", string showType = "movie")
         {
-            var requestUrl = $"https://streaming-availability.p.rapidapi.com/shows/search/filters?series_granularity=show&order_direction=asc&order_by=original_title&genres_relation=and&output_language=en&show_type=movie&query={Uri.EscapeDataString(query)}";
+            var queryParams = new Dictionary<string, string>
+            {
+                { "country", country },
+                { "keyword", query },
+                { "show_type", showType },
+                { "output_language", "en" }
+            };
+
+            var requestUrl = $"{_baseUrl}/search/title?{BuildQueryString(queryParams)}";
 
             var response = await _httpClient.GetAsync(requestUrl);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+
             if (!response.IsSuccessStatusCode)
             {
+                Console.WriteLine($"❌ Failed to fetch movies: {response.ReasonPhrase}\nAPI Response: {jsonResponse}");
                 throw new Exception($"Failed to fetch movies: {response.ReasonPhrase}");
             }
 
-            var jsonResponse = await response.Content.ReadAsStringAsync();
             return ParseApiResponse(jsonResponse);
         }
 
-        public async Task<List<Movie>> GetMoviesByPlatformAsync(string platformName)
+        public async Task<List<Movie>> GetTopShowsAsync(string country, List<string> services)
         {
-            var requestUrl = $"https://streaming-availability.p.rapidapi.com/shows/search/filters?series_granularity=show&order_direction=asc&order_by=original_title&genres_relation=and&output_language=en&show_type=movie&streaming_platform={Uri.EscapeDataString(platformName)}";
+            var masterList = new List<Movie>();
+
+            foreach (var service in services)
+            {
+                var queryParams = new Dictionary<string, string>
+                {
+                    { "country", country },
+                    { "service", service }
+                };
+
+                var requestUrl = $"{_baseUrl}/top?{BuildQueryString(queryParams)}";
+
+                var response = await _httpClient.GetAsync(requestUrl);
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"❌ Failed to fetch top shows from {service}: {response.ReasonPhrase}\nAPI Response: {jsonResponse}");
+                    continue; // Skip failed service request and proceed
+                }
+
+                var shows = ParseApiResponse(jsonResponse);
+                masterList.AddRange(shows);
+            }
+
+            return masterList;
+        }
+
+        private async Task<List<Movie>> GetMoviesByPlatformAsync(string platform, string country = "us")
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                { "country", country },
+                { "catalogs", platform },
+                { "show_type", "movie" }
+            };
+
+            var requestUrl = $"{_baseUrl}/search/filters?{BuildQueryString(queryParams)}";
 
             var response = await _httpClient.GetAsync(requestUrl);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+
             if (!response.IsSuccessStatusCode)
             {
+                Console.WriteLine($"❌ Failed to fetch platform-based movies: {response.ReasonPhrase}\nAPI Response: {jsonResponse}");
                 throw new Exception($"Failed to fetch movies: {response.ReasonPhrase}");
             }
 
-            var jsonResponse = await response.Content.ReadAsStringAsync();
             return ParseApiResponse(jsonResponse);
+        }
+
+        private string BuildQueryString(Dictionary<string, string> parameters)
+        {
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            foreach (var param in parameters)
+            {
+                if (!string.IsNullOrEmpty(param.Value))
+                {
+                    query[param.Key] = param.Value;
+                }
+            }
+            return query.ToString();
         }
 
         private List<Movie> ParseApiResponse(string jsonResponse)

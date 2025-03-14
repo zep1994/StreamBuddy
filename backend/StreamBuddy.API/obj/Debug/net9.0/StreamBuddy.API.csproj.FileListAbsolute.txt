@@ -183,3 +183,5 @@ C:\Users\thoma\source\repos\StreamBuddy\backend\StreamBuddy.API\obj\Debug\net9.0
 C:\Users\thoma\source\repos\StreamBuddy\backend\StreamBuddy.API\obj\Debug\net9.0\StreamBuddy.API.pdb
 C:\Users\thoma\source\repos\StreamBuddy\backend\StreamBuddy.API\obj\Debug\net9.0\StreamBuddy.API.genruntimeconfig.cache
 C:\Users\thoma\source\repos\StreamBuddy\backend\StreamBuddy.API\obj\Debug\net9.0\ref\StreamBuddy.API.dll
+C:\Users\thoma\source\repos\StreamBuddy\backend\StreamBuddy.API\bin\Debug\net9.0\DotNetEnv.dll
+C:\Users\thoma\source\repos\StreamBuddy\backend\StreamBuddy.API\bin\Debug\net9.0\Sprache.dll

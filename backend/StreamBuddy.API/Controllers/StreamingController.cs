@@ -15,12 +15,12 @@ namespace StreamBuddy.API.Controllers
             _streamingService = streamingService;
         }
 
-        [HttpGet("search")]
-        public async Task<IActionResult> SearchMovies([FromQuery] string query)
+        [HttpGet("shows/search/title")]
+        public async Task<IActionResult> SearchMovies([FromQuery] string query, [FromQuery] string country = "us", [FromQuery] string showType = "movie")
         {
             try
             {
-                var movies = await _streamingService.SearchMoviesAsync(query);
+                var movies = await _streamingService.SearchMoviesAsync(query, country, showType);
                 return Ok(movies);
             }
             catch (Exception ex)
@@ -29,12 +29,15 @@ namespace StreamBuddy.API.Controllers
             }
         }
 
-        [HttpGet("platform")]
-        public async Task<IActionResult> GetMoviesByPlatform([FromQuery] string platform)
+        [HttpGet("shows/top")]
+        public async Task<IActionResult> GetTopShows(
+            [FromQuery] string country = "us",
+            [FromQuery] string services = "netflix") // Default to Netflix if not provided
         {
             try
             {
-                var movies = await _streamingService.GetMoviesByPlatformAsync(platform);
+                var serviceList = services.Split(',').Select(s => s.Trim()).ToList(); // Convert CSV input to a list
+                var movies = await _streamingService.GetTopShowsAsync(country, serviceList);
                 return Ok(movies);
             }
             catch (Exception ex)
