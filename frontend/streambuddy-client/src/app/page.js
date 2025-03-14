@@ -1,95 +1,84 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+import { searchMovies, getTopShows } from "./services/streamingService";
 import styles from "./page.module.css";
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    const [topNetflixShows, setTopNetflixShows] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+    useEffect(() => {
+        async function fetchNetflixShows() {
+            const shows = await getTopShows("us", "netflix");
+            setTopNetflixShows(shows);
+        }
+        fetchNetflixShows();
+    }, []);
+
+    const handleSearch = async () => {
+        if (!searchQuery.trim()) return;
+        const results = await searchMovies(searchQuery);
+        setSearchResults(results);
+    };
+
+    return (
+        <div className={styles.container}>
+            <h1 className={styles.title}>StreamBuddy Dashboard</h1>
+
+            {/* Search Bar */}
+            <div className={styles.searchBox}>
+                <input
+                    type="text"
+                    placeholder="Search for a movie or show..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button onClick={handleSearch}>Search</button>
+            </div>
+
+            {/* Search Results */}
+            <section>
+                <h2>Search Results</h2>
+                <div className={styles.moviesGrid}>
+                    {searchResults.length > 0 ? (
+                        searchResults.map((movie) => (
+                            <div key={movie.id} className={styles.movieCard}>
+                                <img
+                                    src="/placeholder.jpg" // Placeholder until actual images are available
+                                    alt={movie.title}
+                                    className={styles.movieImage}
+                                />
+                                <h3>{movie.title} ({movie.releaseYear})</h3>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No movies found.</p>
+                    )}
+                </div>
+            </section>
+
+            {/* Top Netflix Shows */}
+            <section>
+                <h2>Top Netflix Shows</h2>
+                <div className={styles.moviesGrid}>
+                    {topNetflixShows.length > 0 ? (
+                        topNetflixShows.map((show) => (
+                            <div key={show.id} className={styles.movieCard}>
+                                <img
+                                    src="/placeholder.jpg" // Placeholder
+                                    alt={show.title}
+                                    className={styles.movieImage}
+                                />
+                                <h3>{show.title} ({show.releaseYear})</h3>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No top shows available.</p>
+                    )}
+                </div>
+            </section>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    );
 }

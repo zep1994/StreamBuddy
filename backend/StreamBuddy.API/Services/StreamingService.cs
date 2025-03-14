@@ -71,7 +71,7 @@ namespace StreamBuddy.API.Services
                 if (!response.IsSuccessStatusCode)
                 {
                     Console.WriteLine($"❌ Failed to fetch top shows from {service}: {response.ReasonPhrase}\nAPI Response: {jsonResponse}");
-                    continue; // Skip failed service request and proceed
+                    continue; 
                 }
 
                 var shows = ParseApiResponse(jsonResponse);
