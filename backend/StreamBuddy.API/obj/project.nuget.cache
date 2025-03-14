@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "DwT77bBqtk8=",
+  "dgSpecHash": "aUKARLi5H/0=",
   "success": true,
   "projectFilePath": "C:\\Users\\thoma\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\thoma\\.nuget\\packages\\chillicream.nitro.app\\23.0.4\\chillicream.nitro.app.23.0.4.nupkg.sha512",
+    "C:\\Users\\thoma\\.nuget\\packages\\dotenv.net\\3.2.1\\dotenv.net.3.2.1.nupkg.sha512",
     "C:\\Users\\thoma\\.nuget\\packages\\graphql\\8.4.1\\graphql.8.4.1.nupkg.sha512",
     "C:\\Users\\thoma\\.nuget\\packages\\graphql-parser\\9.5.0\\graphql-parser.9.5.0.nupkg.sha512",
     "C:\\Users\\thoma\\.nuget\\packages\\graphql.analyzers\\8.4.1\\graphql.analyzers.8.4.1.nupkg.sha512",
