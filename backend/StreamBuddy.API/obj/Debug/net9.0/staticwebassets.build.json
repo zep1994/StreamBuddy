@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "SB8QrQzCWvmF/NEPr1/hqLhXLxza2r02gWZqu2QNXLE=",
+  "Source": "StreamBuddy.API",
+  "BasePath": "_content/StreamBuddy.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
