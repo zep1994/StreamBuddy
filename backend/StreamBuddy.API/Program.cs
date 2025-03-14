@@ -3,13 +3,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StreamBuddy.API.Data;
+using StreamBuddy.API.Services;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
+// Load appsettings.json and environment-specific configuration
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
-// Load Environment Variables from .env file
+// Load .env file manually
 var envFilePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), ".env");
 if (File.Exists(envFilePath))
 {
@@ -23,19 +29,21 @@ if (File.Exists(envFilePath))
     }
 }
 
-// PostgreSQL DB Connection String
-var connectionString = $"Host={Environment.GetEnvironmentVariable("POSTGRES_HOST")};" +
-                       $"Port={Environment.GetEnvironmentVariable("POSTGRES_PORT")};" +
-                       $"Database={Environment.GetEnvironmentVariable("POSTGRES_DB")};" +
-                       $"Username={Environment.GetEnvironmentVariable("POSTGRES_USER")};" +
-                       $"Password={Environment.GetEnvironmentVariable("POSTGRES_PASSWORD")}";
+// Retrieve connection string
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    Console.WriteLine("❌ Connection string is missing. Make sure appsettings.json or .env is configured properly.");
+    throw new InvalidOperationException("Database connection string is not set.");
+}
 
 // Configure PostgreSQL DB Context
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // JWT Authentication
-var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ?? "DefaultSecretKey");
+var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Secret"] ?? "DefaultSecretKey");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -49,6 +57,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
+
+builder.Services.AddSingleton<StreamingService>();
 
 // GraphQL
 builder.Services
@@ -67,6 +77,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapGraphQL();
+app.MapControllers();
 
 app.Run();
-
