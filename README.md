@@ -255,5 +255,3 @@ public class Query
 
 ---
 
-This version removes all Docker references, improves clarity, and refines setup instructions for a non-Dockerized environment.
-
