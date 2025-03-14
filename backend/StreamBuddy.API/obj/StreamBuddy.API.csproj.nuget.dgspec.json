@@ -52,10 +52,6 @@
               "target": "Package",
               "version": "[8.4.1, )"
             },
-            "GraphQL.Server.Transports.AspNetCore": {
-              "target": "Package",
-              "version": "[8.2.0, )"
-            },
             "GraphQL.Server.Ui.Playground": {
               "target": "Package",
               "version": "[8.2.0, )"

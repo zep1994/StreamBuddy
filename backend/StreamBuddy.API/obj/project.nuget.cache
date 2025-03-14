@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+v8sAU14XH8=",
+  "dgSpecHash": "DwT77bBqtk8=",
   "success": true,
   "projectFilePath": "C:\\Users\\thoma\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
   "expectedPackageFiles": [
@@ -9,9 +9,7 @@
     "C:\\Users\\thoma\\.nuget\\packages\\graphql-parser\\9.5.0\\graphql-parser.9.5.0.nupkg.sha512",
     "C:\\Users\\thoma\\.nuget\\packages\\graphql.analyzers\\8.4.1\\graphql.analyzers.8.4.1.nupkg.sha512",
     "C:\\Users\\thoma\\.nuget\\packages\\graphql.microsoftdi\\8.4.1\\graphql.microsoftdi.8.4.1.nupkg.sha512",
-    "C:\\Users\\thoma\\.nuget\\packages\\graphql.server.transports.aspnetcore\\8.2.0\\graphql.server.transports.aspnetcore.8.2.0.nupkg.sha512",
     "C:\\Users\\thoma\\.nuget\\packages\\graphql.server.ui.playground\\8.2.0\\graphql.server.ui.playground.8.2.0.nupkg.sha512",
-    "C:\\Users\\thoma\\.nuget\\packages\\graphql.systemtextjson\\8.2.1\\graphql.systemtextjson.8.2.1.nupkg.sha512",
     "C:\\Users\\thoma\\.nuget\\packages\\greendonut\\15.0.3\\greendonut.15.0.3.nupkg.sha512",
     "C:\\Users\\thoma\\.nuget\\packages\\greendonut.abstractions\\15.0.3\\greendonut.abstractions.15.0.3.nupkg.sha512",
     "C:\\Users\\thoma\\.nuget\\packages\\greendonut.data\\15.0.3\\greendonut.data.15.0.3.nupkg.sha512",
