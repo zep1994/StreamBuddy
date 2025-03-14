@@ -28,5 +28,19 @@ namespace StreamBuddy.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpGet("platform")]
+        public async Task<IActionResult> GetMoviesByPlatform([FromQuery] string platform)
+        {
+            try
+            {
+                var movies = await _streamingService.GetMoviesByPlatformAsync(platform);
+                return Ok(movies);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

@@ -8,14 +8,13 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load appsettings.json and environment-specific configuration
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables();
+    .AddEnvironmentVariables(); 
 
-// Load .env file manually
+// Load .env file manually (if needed)
 var envFilePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), ".env");
 if (File.Exists(envFilePath))
 {
@@ -37,6 +36,8 @@ if (string.IsNullOrEmpty(connectionString))
     Console.WriteLine("❌ Connection string is missing. Make sure appsettings.json or .env is configured properly.");
     throw new InvalidOperationException("Database connection string is not set.");
 }
+
+builder.Services.AddControllers(); 
 
 // Configure PostgreSQL DB Context
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -66,9 +67,6 @@ builder.Services
     .AddQueryType<Query>();
 
 var app = builder.Build();
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {

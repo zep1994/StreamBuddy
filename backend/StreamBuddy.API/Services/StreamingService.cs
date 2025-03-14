@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 using StreamBuddy.API.Models;
 
 namespace StreamBuddy.API.Services
@@ -11,9 +12,14 @@ namespace StreamBuddy.API.Services
 
         public StreamingService(IConfiguration configuration)
         {
-            _httpClient = new HttpClient();
-            _apiKey = configuration["RAPIDAPI_KEY"] ?? throw new Exception("RapidAPI key is missing.");
+           _apiKey = configuration["RAPIDAPI_KEY"];
 
+            if (string.IsNullOrEmpty(_apiKey))
+            {
+                throw new Exception("❌ RapidAPI key is missing. Make sure it's in `.env` or `appsettings.json`.");
+            }
+
+            _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Add("x-rapidapi-key", _apiKey);
             _httpClient.DefaultRequestHeaders.Add("x-rapidapi-host", "streaming-availability.p.rapidapi.com");
         }
@@ -29,8 +35,21 @@ namespace StreamBuddy.API.Services
             }
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            var parsedMovies = ParseApiResponse(jsonResponse);
-            return parsedMovies;
+            return ParseApiResponse(jsonResponse);
+        }
+
+        public async Task<List<Movie>> GetMoviesByPlatformAsync(string platformName)
+        {
+            var requestUrl = $"https://streaming-availability.p.rapidapi.com/shows/search/filters?series_granularity=show&order_direction=asc&order_by=original_title&genres_relation=and&output_language=en&show_type=movie&streaming_platform={Uri.EscapeDataString(platformName)}";
+
+            var response = await _httpClient.GetAsync(requestUrl);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to fetch movies: {response.ReasonPhrase}");
+            }
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            return ParseApiResponse(jsonResponse);
         }
 
         private List<Movie> ParseApiResponse(string jsonResponse)
