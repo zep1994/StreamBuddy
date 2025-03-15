@@ -27,10 +27,10 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("Database connection string is not set.");
 }
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:Secret"] ?? "DefaultSecretKey");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -46,8 +46,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
-
+ 
 builder.Services.AddSingleton<StreamingService>();
+builder.Services.AddScoped<UserReactionsService>();
 
 builder.Services
     .AddGraphQLServer()
