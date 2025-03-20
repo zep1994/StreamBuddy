@@ -5,9 +5,19 @@ using Microsoft.IdentityModel.Tokens;
 using StreamBuddy.API.Data;
 using StreamBuddy.API.Services;
 using DotNetEnv;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory; // ✅ Import DotNetEnv
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory; 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using HotChocolate.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ✅ Load Configuration (Ensures `appsettings.json` is used)
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+// ✅ Register Services
+builder.Services.AddControllers();
+builder.Services.AddSingleton<StreamingService>();
 
 Env.Load();
 
@@ -46,23 +56,54 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
+
+
+// ✅ Add CORS Policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder => builder
+            .AllowAnyOrigin()  
+            .AllowAnyMethod()  
+            .AllowAnyHeader()); 
+});
  
+builder.Services.AddControllers();
 builder.Services.AddSingleton<StreamingService>();
 builder.Services.AddScoped<UserReactionsService>();
 
+// Register PostgreSQL & GraphQL
 builder.Services
+    .AddDbContext<AppDbContext>() 
     .AddGraphQLServer()
-    .AddQueryType<Query>();
+    .AddQueryType<Query>(); 
 
 var app = builder.Build();
+
+// ✅ Debugging: Print API Key to Verify Configuration is Loaded
+var apiKey = builder.Configuration["RapidAPI:ApiKey"];
+Console.WriteLine($"✅ PROGRAM.CS: RAPIDAPI_KEY LOADED: {apiKey?.Substring(0, 5)}*****");
+
+if (string.IsNullOrEmpty(apiKey))
+{
+    Console.WriteLine("❌ RAPIDAPI_KEY NOT FOUND. Check appsettings.json or environment variables.");
+}
+else
+{
+    Console.WriteLine($"✅ RAPIDAPI_KEY LOADED: {apiKey.Substring(0, 5)}*****"); 
+}
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
-app.MapGraphQL();
+app.UseCors("AllowAllOrigins");
+
+
+app.UseRouting();
+app.UseAuthorization();
 app.MapControllers();
+app.MapGraphQL();
 
 app.Run();

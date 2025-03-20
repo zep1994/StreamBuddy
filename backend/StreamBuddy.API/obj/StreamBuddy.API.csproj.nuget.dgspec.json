@@ -1,25 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\thoma\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj": {}
+    "D:\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\thoma\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj": {
+    "D:\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\thoma\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
+        "projectUniqueName": "D:\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
         "projectName": "StreamBuddy.API",
-        "projectPath": "C:\\Users\\thoma\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
+        "projectPath": "D:\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
         "packagesPath": "C:\\Users\\thoma\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\thoma\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\obj\\",
+        "outputPath": "D:\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\thoma\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\thoma\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -38,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net9.0": {
@@ -110,7 +117,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

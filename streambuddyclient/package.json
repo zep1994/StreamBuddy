@@ -1,5 +1,5 @@
 {
-  "name": "streambuddy-client",
+  "name": "streambuddyclient",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,16 +10,19 @@
   },
   "dependencies": {
     "@apollo/client": "^3.13.4",
-    "axios": "^1.8.3",
+    "@apollo/server": "^4.11.3",
+    "axios": "^1.8.4",
+    "dotenv": "^16.4.7",
     "graphql": "^16.10.0",
-    "jsonwebtoken": "^9.0.2",
-    "next": "15.2.2",
+    "next": "15.2.3",
+    "pg": "^8.14.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/react": "19.0.12",
     "eslint": "^9",
-    "eslint-config-next": "15.2.2"
+    "eslint-config-next": "15.2.3"
   }
 }

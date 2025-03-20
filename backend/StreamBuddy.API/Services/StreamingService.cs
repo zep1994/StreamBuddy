@@ -1,160 +1,95 @@
-using System.Net.Http.Headers;
-using System.Text.Json;
-using Microsoft.Extensions.Configuration;
-using StreamBuddy.API.Models;
-using System.Web;
-
-namespace StreamBuddy.API.Services
+public class StreamingService
 {
-    public class StreamingService
+    private readonly HttpClient _httpClient;
+    private readonly string _apiKey;
+    private readonly string _apiHost;
+    private readonly string _baseUrl;
+
+    public StreamingService(IConfiguration configuration)
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _apiKey;
-        private readonly string _baseUrl;
+        _httpClient = new HttpClient();
 
-        public StreamingService(IConfiguration configuration)
+        _apiKey = configuration["RapidAPI:ApiKey"]
+            ?? throw new ArgumentNullException(nameof(_apiKey), "RapidAPI key is missing in appsettings.json");
+
+        _apiHost = configuration["RapidAPI:ApiHost"]
+            ?? throw new ArgumentNullException(nameof(_apiHost), "RapidAPI host is missing in appsettings.json");
+
+        _baseUrl = configuration["RapidAPI:BaseUrl"]
+            ?? throw new ArgumentNullException(nameof(_baseUrl), "Base URL is missing in appsettings.json");
+    }
+
+    /// ✅ General API request method
+    private async Task<string> SendRequestAsync(string endpoint, Dictionary<string, string>? queryParams = null)
+    {
+        if (string.IsNullOrEmpty(endpoint))
+            throw new ArgumentException("API endpoint cannot be null or empty.");
+
+        var fullUrl = $"{_baseUrl}{endpoint}";
+
+        if (queryParams != null)
         {
-            _apiKey = configuration["RAPIDAPI_KEY"] ?? Environment.GetEnvironmentVariable("RAPIDAPI_KEY");
-            _baseUrl = $"https://{configuration["RAPIDAPI_HOST"] ?? "streaming-availability.p.rapidapi.com"}/shows";
-
-            if (string.IsNullOrEmpty(_apiKey))
+            // ✅ Always include "country=us" unless explicitly provided
+            if (!queryParams.ContainsKey("country"))
             {
-                throw new Exception("❌ RapidAPI key is missing. Make sure it's in `.env` or `appsettings.json`.");
+                queryParams["country"] = "us";
             }
 
-            _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Add("x-rapidapi-key", _apiKey);
-            _httpClient.DefaultRequestHeaders.Add("x-rapidapi-host", configuration["RAPIDAPI_HOST"] ?? "streaming-availability.p.rapidapi.com");
+            var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+            fullUrl += $"?{queryString}";
         }
 
-        public async Task<List<Movie>> SearchMoviesAsync(string query, string country = "us", string showType = "movie")
+        Console.WriteLine($"📢 Sending Request: {fullUrl}");
+
+        var request = new HttpRequestMessage(HttpMethod.Get, fullUrl);
+        request.Headers.Add("x-rapidapi-key", _apiKey);
+        request.Headers.Add("x-rapidapi-host", _apiHost);
+
+        var response = await _httpClient.SendAsync(request);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        Console.WriteLine($"📢 API Response: {response.StatusCode} - {responseContent}");
+
+        if (!response.IsSuccessStatusCode)
         {
-            var queryParams = new Dictionary<string, string>
-            {
-                { "country", country },
-                { "keyword", query },
-                { "show_type", showType },
-                { "output_language", "en" }
-            };
-
-            var requestUrl = $"{_baseUrl}/search/title?{BuildQueryString(queryParams)}";
-
-            var response = await _httpClient.GetAsync(requestUrl);
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                Console.WriteLine($"❌ Failed to fetch movies: {response.ReasonPhrase}\nAPI Response: {jsonResponse}");
-                throw new Exception($"Failed to fetch movies: {response.ReasonPhrase}");
-            }
-
-            return ParseApiResponse(jsonResponse);
+            throw new HttpRequestException($"API Request Failed: {response.StatusCode} - {responseContent}");
         }
 
-        public async Task<List<Movie>> GetTopShowsAsync(string country, List<string> services)
+        return responseContent;
+    }
+
+    /// ✅ Get show availability (always includes `country=us` by default)
+    public async Task<string> GetShowAvailability(string type, string id, string? country = "us")
+    {
+        if (string.IsNullOrWhiteSpace(type) || string.IsNullOrWhiteSpace(id))
+            throw new ArgumentException("Type and ID must be provided.");
+
+        var validTypes = new HashSet<string> { "movie", "series" };
+        if (!validTypes.Contains(type.ToLower()))
+            throw new ArgumentException("Invalid type. Must be 'movie' or 'series'.");
+
+        var endpoint = "/get/basic";
+        var queryParams = new Dictionary<string, string>
         {
-            var masterList = new List<Movie>();
+            { "country", country ?? "us" },
+            { "imdb_id", id }
+        };
 
-            foreach (var service in services)
-            {
-                var queryParams = new Dictionary<string, string>
-                {
-                    { "country", country },
-                    { "service", service }
-                };
+        return await SendRequestAsync(endpoint, queryParams);
+    }
 
-                var requestUrl = $"{_baseUrl}/top?{BuildQueryString(queryParams)}";
+    /// ✅ Search for movies/shows (defaults to `country=us`)
+    public async Task<string> SearchMovies(string query, string? country = "us")
+    {
+        if (string.IsNullOrWhiteSpace(query) || query.Length < 2)
+            throw new ArgumentException("Search query must be at least 2 characters long.");
 
-                var response = await _httpClient.GetAsync(requestUrl);
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine($"❌ Failed to fetch top shows from {service}: {response.ReasonPhrase}\nAPI Response: {jsonResponse}");
-                    continue; 
-                }
-
-                var shows = ParseApiResponse(jsonResponse);
-                masterList.AddRange(shows);
-            }
-
-            return masterList;
-        }
-
-        private async Task<List<Movie>> GetMoviesByPlatformAsync(string platform, string country = "us")
+        var endpoint = "/search/ultra";
+        var queryParams = new Dictionary<string, string>
         {
-            var queryParams = new Dictionary<string, string>
-            {
-                { "country", country },
-                { "catalogs", platform },
-                { "show_type", "movie" }
-            };
+            { "query", query },
+            { "country", country ?? "us" }
+        };
 
-            var requestUrl = $"{_baseUrl}/search/filters?{BuildQueryString(queryParams)}";
-
-            var response = await _httpClient.GetAsync(requestUrl);
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                Console.WriteLine($"❌ Failed to fetch platform-based movies: {response.ReasonPhrase}\nAPI Response: {jsonResponse}");
-                throw new Exception($"Failed to fetch movies: {response.ReasonPhrase}");
-            }
-
-            return ParseApiResponse(jsonResponse);
-        }
-
-        private string BuildQueryString(Dictionary<string, string> parameters)
-        {
-            var query = HttpUtility.ParseQueryString(string.Empty);
-            foreach (var param in parameters)
-            {
-                if (!string.IsNullOrEmpty(param.Value))
-                {
-                    query[param.Key] = param.Value;
-                }
-            }
-            return query.ToString();
-        }
-
-        private List<Movie> ParseApiResponse(string jsonResponse)
-        {
-            var movies = new List<Movie>();
-
-            using var doc = JsonDocument.Parse(jsonResponse);
-            var showsArray = doc.RootElement.GetProperty("shows");
-
-            foreach (var show in showsArray.EnumerateArray())
-            {
-                var movie = new Movie
-                {
-                    Id = int.Parse(show.GetProperty("id").GetString() ?? "0"),
-                    ImdbId = show.GetProperty("imdbId").GetString() ?? string.Empty,
-                    TmdbId = show.GetProperty("tmdbId").GetString() ?? string.Empty,
-                    Title = show.GetProperty("title").GetString() ?? string.Empty,
-                    OriginalTitle = show.GetProperty("originalTitle").GetString() ?? string.Empty,
-                    Overview = show.GetProperty("overview").GetString() ?? string.Empty,
-                    ReleaseYear = show.GetProperty("releaseYear").GetInt32(),
-                    Rating = show.GetProperty("rating").GetDouble(),
-                    Genres = show.GetProperty("genres").EnumerateArray().Select(g => g.GetProperty("name").GetString() ?? "").ToList(),
-                    Directors = show.GetProperty("directors").EnumerateArray().Select(d => d.GetString() ?? "").ToList(),
-                    Cast = show.GetProperty("cast").EnumerateArray().Select(c => c.GetString() ?? "").ToList(),
-                    StreamingPlatforms = show.GetProperty("streamingOptions").GetProperty("us")
-                        .EnumerateArray()
-                        .Select(s => new StreamingOption
-                        {
-                            ServiceId = s.GetProperty("service").GetProperty("id").GetString() ?? string.Empty,
-                            ServiceName = s.GetProperty("service").GetProperty("name").GetString() ?? string.Empty,
-                            SubscriptionType = s.GetProperty("type").GetString() ?? string.Empty,
-                            Link = s.GetProperty("link").GetString() ?? string.Empty
-                        })
-                        .ToList()
-                };
-
-                movies.Add(movie);
-            }
-
-            return movies;
-        }
+        return await SendRequestAsync(endpoint, queryParams);
     }
 }

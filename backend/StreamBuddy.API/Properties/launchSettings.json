@@ -7,7 +7,10 @@
       "launchBrowser": false,
       "applicationUrl": "http://localhost:5279",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RapidAPI__ApiKey": "e6eb77d186msh6cf3e0d2407623bp1813f0jsnd0e36e1f0975",
+        "RapidAPI__ApiHost": "streaming-availability.p.rapidapi.com",
+        "RapidAPI__BaseUrl": "https://streaming-availability.p.rapidapi.com"
       }
     },
     "https": {

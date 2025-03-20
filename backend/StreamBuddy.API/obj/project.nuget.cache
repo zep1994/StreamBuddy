@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "lEIyIdVA4O0=",
+  "dgSpecHash": "trj1jSDrh2E=",
   "success": true,
-  "projectFilePath": "C:\\Users\\thoma\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
+  "projectFilePath": "D:\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\thoma\\.nuget\\packages\\chillicream.nitro.app\\23.0.4\\chillicream.nitro.app.23.0.4.nupkg.sha512",
     "C:\\Users\\thoma\\.nuget\\packages\\dotenv.net\\3.2.1\\dotenv.net.3.2.1.nupkg.sha512",

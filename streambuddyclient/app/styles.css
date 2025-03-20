@@ -1,0 +1,36 @@
+.container {
+    text-align: center;
+    max-width: 600px;
+    margin: auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+  }
+  
+  button {
+    padding: 10px 15px;
+    margin: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .results {
+    margin-top: 20px;
+  }
+  
+  .movie {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+  }
+  
+  img {
+    display: block;
+    margin: 10px auto;
+  }
+  

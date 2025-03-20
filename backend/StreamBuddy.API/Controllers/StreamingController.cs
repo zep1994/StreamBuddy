@@ -1,49 +1,49 @@
 using Microsoft.AspNetCore.Mvc;
-using StreamBuddy.API.Services;
-using StreamBuddy.API.Models;
 
-namespace StreamBuddy.API.Controllers
+[ApiController]
+[Route("api/streaming")]
+public class StreamingController : ControllerBase
 {
-    [Route("api/streaming")]
-    [ApiController]
-    public class StreamingController : ControllerBase
+    private readonly StreamingService _streamingService;
+
+    public StreamingController(StreamingService streamingService)
     {
-        private readonly StreamingService _streamingService;
+        _streamingService = streamingService;
+    }
 
-        public StreamingController(StreamingService streamingService)
+    [HttpGet("availability/{type}/{id}")]
+    public async Task<IActionResult> GetShowAvailability(string type, string id, [FromQuery] string? country = "us")
+    {
+        try
         {
-            _streamingService = streamingService;
+            var result = await _streamingService.GetShowAvailability(type, id, country);
+            return Ok(result);
         }
-
-        [HttpGet("shows/search/title")]
-        public async Task<IActionResult> SearchMovies([FromQuery] string query, [FromQuery] string country = "us", [FromQuery] string showType = "movie")
+        catch (ArgumentException ex)
         {
-            try
-            {
-                var movies = await _streamingService.SearchMoviesAsync(query, country, showType);
-                return Ok(movies);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return BadRequest(new { message = ex.Message });
         }
-
-        [HttpGet("shows/top")]
-        public async Task<IActionResult> GetTopShows(
-            [FromQuery] string country = "us",
-            [FromQuery] string services = "netflix") // Default to Netflix if not provided
+        catch (HttpRequestException ex)
         {
-            try
-            {
-                var serviceList = services.Split(',').Select(s => s.Trim()).ToList(); // Convert CSV input to a list
-                var movies = await _streamingService.GetTopShowsAsync(country, serviceList);
-                return Ok(movies);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return StatusCode(500, new { message = "Error fetching data from RapidAPI", error = ex.Message });
+        }
+    }
+
+    [HttpGet("search/{query}")]
+    public async Task<IActionResult> SearchMovies(string query, [FromQuery] string? country = "us")
+    {
+        try
+        {
+            var result = await _streamingService.SearchMovies(query, country);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (HttpRequestException ex)
+        {
+            return StatusCode(500, new { message = "Error fetching data from RapidAPI", error = ex.Message });
         }
     }
 }

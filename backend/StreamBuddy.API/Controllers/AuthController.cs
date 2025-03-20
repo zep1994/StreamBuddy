@@ -26,17 +26,20 @@ namespace StreamBuddy.API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserRegisterDto request)
+        public async Task<IActionResult> Register(UserDto userDto)
         {
-            if (await _context.Users.AnyAsync(u => u.Username == request.Username))
-                return BadRequest("Username already exists.");
+            if (string.IsNullOrWhiteSpace(userDto.Password))
+            {
+                return BadRequest("Password cannot be empty.");
+            }
 
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            using var hmac = new HMACSHA512();
+            var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password)); // Ensure it's not null
+            var passwordSalt = hmac.Key;
 
             var user = new User
             {
-                Username = request.Username,
-                Email = request.Email,
+                Username = userDto.Username,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt
             };
@@ -44,8 +47,9 @@ namespace StreamBuddy.API.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok("User registered successfully.");
+            return Ok(new { message = "User registered successfully" });
         }
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserLoginDto request)
