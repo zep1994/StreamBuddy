@@ -1,4 +1,4 @@
 backend/StreamBuddy.API/appsettings.json
 backend/StreamBuddy.API/appsettings.*.json
 .env*
-.env
+.env 

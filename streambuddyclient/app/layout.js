@@ -1,11 +1,13 @@
-export default function Layout({ children }) {
+'use client';
+import { ApolloProvider } from '@apollo/client';
+import client from '../lib/client'; // Path relative to 'app/' directory
+import './globals.css';
+
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <nav>
-          <h1>StreamBuddy</h1>
-        </nav>
-        <main>{children}</main>
+        <ApolloProvider client={client}>{children}</ApolloProvider>
       </body>
     </html>
   );

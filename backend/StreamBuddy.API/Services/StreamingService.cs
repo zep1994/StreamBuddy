@@ -57,7 +57,6 @@ public class StreamingService
         return responseContent;
     }
 
-    /// ✅ Get show availability (always includes `country=us` by default)
     public async Task<string> GetShowAvailability(string type, string id, string? country = "us")
     {
         if (string.IsNullOrWhiteSpace(type) || string.IsNullOrWhiteSpace(id))
@@ -67,7 +66,7 @@ public class StreamingService
         if (!validTypes.Contains(type.ToLower()))
             throw new ArgumentException("Invalid type. Must be 'movie' or 'series'.");
 
-        var endpoint = "/get/basic";
+    var endpoint = "/v2/get"; 
         var queryParams = new Dictionary<string, string>
         {
             { "country", country ?? "us" },
@@ -77,7 +76,6 @@ public class StreamingService
         return await SendRequestAsync(endpoint, queryParams);
     }
 
-    /// ✅ Search for movies/shows (defaults to `country=us`)
     public async Task<string> SearchMovies(string query, string? country = "us")
     {
         if (string.IsNullOrWhiteSpace(query) || query.Length < 2)

@@ -28,7 +28,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "lib/apolloClient"  ],
   "exclude": [
     "node_modules"
   ]

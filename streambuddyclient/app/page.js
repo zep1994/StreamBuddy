@@ -1,51 +1,23 @@
-"use client";
+'use client';
+import { useQuery, gql } from '@apollo/client';
 
-import { useState } from "react";
-import { useLazyQuery } from "@apollo/client";
-import client from "./graphql/client"; // ✅ Correct import
-import { SEARCH_MOVIES } from "./graphql/queries"; // ✅ Ensure correct path
+const GET_STREAMING_DATA = gql`
+  query GetStreamingData {
+    # Replace with your actual GraphQL query
+    hello # Example query from your backend
+  }
+`;
 
 export default function Home() {
-  const [query, setQuery] = useState("");
-  const [searchMovies, { data, loading, error }] = useLazyQuery(SEARCH_MOVIES, {
-    client,
-  });
+  const { loading, error, data } = useQuery(GET_STREAMING_DATA);
 
-  const handleSearch = () => {
-    if (query.length < 2) {
-      alert("Search query must be at least 2 characters long.");
-      return;
-    }
-    searchMovies({ variables: { query } });
-  };
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div className="container">
-      <h1>StreamBuddy Movie Search</h1>
-      <input
-        type="text"
-        placeholder="Search for a movie..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <button onClick={handleSearch} disabled={loading}>
-        {loading ? "Searching..." : "Search"}
-      </button>
-
-      {error && <p>Error: {error.message}</p>}
-
-      {data && (
-        <div className="results">
-          {data.searchMovies.map((movie) => (
-            <div key={movie.id} className="movie">
-              <h2>{movie.title}</h2>
-              <p>{movie.overview}</p>
-              {movie.posterPath && <img src={movie.posterPath} alt={movie.title} width="150" />}
-              <p>Release Date: {movie.releaseDate}</p>
-            </div>
-          ))}
-        </div>
-      )}
+    <div>
+      <h1>StreamBuddy</h1>
+      <p>{data?.hello || 'No data yet'}</p>
     </div>
   );
 }
