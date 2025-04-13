@@ -9553,11 +9553,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
+      "projectUniqueName": "C:\\Users\\thoma\\Development\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
       "projectName": "StreamBuddy.API",
-      "projectPath": "D:\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
+      "projectPath": "C:\\Users\\thoma\\Development\\StreamBuddy\\backend\\StreamBuddy.API\\StreamBuddy.API.csproj",
       "packagesPath": "C:\\Users\\thoma\\.nuget\\packages\\",
-      "outputPath": "D:\\source\\repos\\StreamBuddy\\backend\\StreamBuddy.API\\obj\\",
+      "outputPath": "C:\\Users\\thoma\\Development\\StreamBuddy\\backend\\StreamBuddy.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -9591,7 +9591,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.100"
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net9.0": {
@@ -9663,7 +9663,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
