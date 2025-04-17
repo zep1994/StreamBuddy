@@ -41,9 +41,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
-    
+
 builder.Services.AddAuthorization();
 
+// 1)  StreamingService needs IConfiguration, so singleton is fine
+builder.Services.AddSingleton<StreamingService>();
+
+// 2)  Your reactions helper uses DbContext, so scoped is appropriate
+builder.Services.AddScoped<UserReactionsService>();
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -72,7 +77,5 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGraphQL();
-
-app.MapGraphQL("/graphql");
 
 app.Run();
