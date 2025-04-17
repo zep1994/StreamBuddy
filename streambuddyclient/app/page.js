@@ -1,23 +1,45 @@
 'use client';
-import { useQuery, gql } from '@apollo/client';
 
-const GET_STREAMING_DATA = gql`
-  query GetStreamingData {
-    # Replace with your actual GraphQL query
-    hello # Example query from your backend
-  }
-`;
+import movies from './graphql/data/movies';
+import './styles.css';
 
 export default function Home() {
-  const { loading, error, data } = useQuery(GET_STREAMING_DATA);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-
   return (
-    <div>
-      <h1>StreamBuddy</h1>
-      <p>{data?.hello || 'No data yet'}</p>
+    <div className="page">
+      <header className="header">
+        <h1>StreamBuddy</h1>
+        <p>Discover Top Movies on Streaming Platforms</p>
+      </header>
+
+      <section className="section">
+        <h2>🔥 Trending Now</h2>
+        <div className="movie-row">
+          {movies.slice(0, 5).map((movie) => (
+            <div key={movie.id} className="movie-card">
+              <img src={movie.image} alt={movie.title} />
+              <h3>{movie.title}</h3>
+              <p>{movie.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>🎬 Popular Picks</h2>
+        <div className="movie-row">
+          {movies.slice(5, 10).map((movie) => (
+            <div key={movie.id} className="movie-card">
+              <img src={movie.image} alt={movie.title} />
+              <h3>{movie.title}</h3>
+              <p>{movie.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer className="footer">
+        StreamBuddy © {new Date().getFullYear()}
+      </footer>
     </div>
   );
 }

@@ -1,35 +1,74 @@
-.container {
-    text-align: center;
-    max-width: 600px;
-    margin: auto;
-    font-family: Arial, sans-serif;
-  }
-  
-  input {
-    width: 80%;
-    padding: 10px;
-    margin: 10px 0;
-  }
-  
-  button {
-    padding: 10px 15px;
-    margin: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .results {
-    margin-top: 20px;
-  }
-  
-  .movie {
-    border-bottom: 1px solid #ddd;
-    padding: 10px;
-  }
-  
-  img {
-    display: block;
-    margin: 10px auto;
-  }
+.page {
+  padding: 30px;
+  font-family: 'Arial', sans-serif;
+  color: #fff;
+  background-color: #111;
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.header h1 {
+  font-size: 3rem;
+  color: #e50914;
+}
+
+.header p {
+  color: #bbb;
+  font-size: 1.2rem;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.section h2 {
+  font-size: 1.6rem;
+  color: #e50914;
+  margin-bottom: 20px;
+}
+
+.movie-row {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 20px;
+  padding-bottom: 10px;
+}
+
+.movie-card {
+  flex: 0 0 auto;
+  width: 220px;
+  background-color: #222;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.movie-card img {
+  width: 100%;
+  height: 330px;
+  object-fit: cover;
+}
+
+.movie-card h3 {
+  font-size: 1rem;
+  padding: 10px;
+  margin: 0;
+}
+
+.movie-card p {
+  font-size: 0.9rem;
+  padding: 0 10px 10px;
+  color: #ccc;
+}
+
+.footer {
+  margin-top: 60px;
+  text-align: center;
+  color: #888;
+  font-size: 0.8rem;
+}
