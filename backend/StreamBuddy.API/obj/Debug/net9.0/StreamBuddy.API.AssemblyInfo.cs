@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("StreamBuddy.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d9f5a0e0a77d8cdae925b8a8b1ef2f71193ce4c1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+42a8a54cc887653280b0728b22321dacccf56ba3")]
 [assembly: System.Reflection.AssemblyProductAttribute("StreamBuddy.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("StreamBuddy.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
