@@ -1,6 +1,3 @@
-using System.Net.Http;
-using System.Text.Json;
-
 namespace StreamBuddy.API.Services
 {
     public class StreamingService

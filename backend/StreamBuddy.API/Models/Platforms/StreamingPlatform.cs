@@ -1,4 +1,3 @@
-using StreamBuddy.API.Models.Movies;
 using StreamBuddy.API.Models.Shows;
 
 namespace StreamBuddy.API.Models.Platforms
