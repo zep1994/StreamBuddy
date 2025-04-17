@@ -1,4 +1,4 @@
-namespace StreamBuddy.API.DTOS
+namespace StreamBuddy.API.DTO.Users
 {
     public class UserRegisterDto
     {
