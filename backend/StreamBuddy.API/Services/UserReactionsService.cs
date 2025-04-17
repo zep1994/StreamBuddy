@@ -1,7 +1,7 @@
 // Services/UserReactionsService.cs
 using Microsoft.EntityFrameworkCore;
 using StreamBuddy.API.Data;
-using StreamBuddy.API.Models;
+using StreamBuddy.API.Models.Users;
 
 namespace StreamBuddy.API.Services
 {
